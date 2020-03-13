@@ -231,8 +231,8 @@ Vous pouvez commencer par vérifier que le ping n'est pas possible actuellement 
 ping 192.168.200.3
 ```
 ---
-
-**LIVRABLE : capture d'écran de votre tentative de ping.**  
+#### Capture d'écran de votre tentative de ping  
+![Capture d'écran de votre tentative de ping](figures/P1.png)  
 
 ---
 
@@ -287,7 +287,8 @@ ping 192.168.100.3
 
 ---
 
-**LIVRABLE : capture d'écran de votre nouvelle tentative de ping.**
+#### Capture d'écran de votre nouvelle tentative de ping  
+![Capture d'écran de votre nouvelle tentative de ping](figures/P2.png)  
 
 ---
 
@@ -301,7 +302,8 @@ ping 8.8.8.8
 
 ---
 
-**LIVRABLE : capture d'écran de votre ping vers l'Internet.**
+#### Capture d'écran de votre ping vers l'Internet
+![Capture d'écran de votre ping vers l'Internet](figures/P3.png)
 
 ---
 
@@ -420,7 +422,9 @@ ping 8.8.8.8
 Faire une capture du ping.
 
 ---
-**LIVRABLE : capture d'écran de votre ping vers l'Internet.**
+
+#### Capture d'écran de votre ping vers l'Internet  
+![Capture d'écran de votre ping vers l'Internet](figures/P4.png)
 
 ---
 
@@ -430,20 +434,20 @@ Faire une capture du ping.
 </ol>
 
 
-| De Client\_in\_LAN à | OK/KO | Commentaires et explications |
-| :---                 | :---: | :---                         |
-| Interface DMZ du FW  | KO    | Policy INPUT du FW est DROP  |
-| Interface LAN du FW  | KO    | Policy INPUT du FW est DROP  |
+| De Client\_in\_LAN à | OK/KO | Commentaires et explications     |
+| :---                 | :---: | :---                             |
+| Interface DMZ du FW  | KO    | Policy INPUT du FW est DROP      |
+| Interface LAN du FW  | KO    | Policy INPUT du FW est DROP      |
 | Client LAN           | OK    | Sur son propre interface donc ok |
-| Serveur WAN          | OK    | Autorisé par règle          |
+| Serveur WAN          | OK    | Autorisé par règle               |
 
 
-| De Server\_in\_DMZ à | OK/KO | Commentaires et explications |
-| :---                 | :---: | :---                         |
-| Interface DMZ du FW  | KO    | Policy INPUT du FW est DROP  |
-| Interface LAN du FW  | KO    | Policy INPUT du FW est DROP  |
+| De Server\_in\_DMZ à | OK/KO | Commentaires et explications     |
+| :---                 | :---: | :---                             |
+| Interface DMZ du FW  | KO    | Policy INPUT du FW est DROP      |
+| Interface LAN du FW  | KO    | Policy INPUT du FW est DROP      |
 | Serveur DMZ          | OK    | Sur son propre interface donc ok |
-| Serveur WAN          | KO    | Policy DROP par défaut sur FW |
+| Serveur WAN          | KO    | Policy DROP par défaut sur FW    |
 
 
 ## Règles pour le protocole DNS
@@ -461,7 +465,8 @@ ping www.google.com
 
 ---
 
-**LIVRABLE : capture d'écran de votre ping.**
+#### Capture d'écran de votre ping
+![Capture d'écran de votre ping](figures/P5.png)
 
 ---
 
@@ -488,7 +493,8 @@ iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sp
 
 ---
 
-**LIVRABLE : capture d'écran de votre ping.**
+#### Capture d'écran de votre ping
+![Capture d'écran de votre ping](figures/P6.png)
 
 ---
 
