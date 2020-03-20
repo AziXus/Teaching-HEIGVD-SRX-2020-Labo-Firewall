@@ -505,8 +505,8 @@ iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sp
 
 ---
 **Réponse**
+Nous n'avons rien remarqué de particulier, nous aurions pû penser qu'il soit plus long à cause de la résolution DNS mais cela ne semble pas être le cas.
 
-**LIVRABLE : Votre réponse ici...**
 
 ---
 
@@ -526,7 +526,15 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 80 -o eth0 -j ACCEPT
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 8080 -o eth0 -j ACCEPT
+
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 80 -i eth0 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 8080 -i eth0 -j ACCEPT
+
+
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 443 -o eth0 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 443 -i eth0 -j ACCEPT
 ```
 
 ---
@@ -538,7 +546,10 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 -d 192.168.200.3 --dport 80 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 -d 192.168.100.0/24 --sport 80 -j ACCEPT
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -d 192.168.200.3 --dport 80 -i eth0 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 --sport 80 -o eth0 -j ACCEPT
 ```
 ---
 
@@ -549,7 +560,7 @@ LIVRABLE : Commandes iptables
 
 ---
 
-**LIVRABLE : capture d'écran.**
+![Capture d'écran](figures/P7.png)
 
 ---
 
@@ -566,7 +577,11 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
+iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 -d 192.168.100.3 --sport 22 -j ACCEPT
+
+iptables -A INPUT -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.3 -d 192.168.100.2 --dport 22 -j ACCEPT
+iptables -A OUTPUT -m state --state ESTABLISHED -p tcp -s 192.168.100.2 -d 192.168.100.3 --sport 22 -j ACCEPT
 ```
 
 ---
@@ -579,7 +594,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 
 ---
 
-**LIVRABLE : capture d'écran de votre connexion ssh.**
+![capture d'écran de votre connexion ssh](figures/P8.png)
 
 ---
 
@@ -590,8 +605,8 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 
 ---
 **Réponse**
-
-**LIVRABLE : Votre réponse ici...**
+Permet d'accéder au serveur à distance via un terminal et donc de ne pas devoir s'y déplacer physiquement.
+ssh est également sécurisé et les données sont chiffrées.
 
 ---
 
@@ -603,8 +618,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 
 ---
 **Réponse**
-
-**LIVRABLE : Votre réponse ici...**
+Il faut être le plus précis possible en spécifiant le moins de machines possibles et donc d'éviter de donner des accès à des machines non-désirées.
 
 ---
 
@@ -619,6 +633,6 @@ A présent, vous devriez avoir le matériel nécessaire afin de reproduire la ta
 
 ---
 
-**LIVRABLE : capture d'écran avec toutes vos règles.**
+![capture d'écran avec toutes vos règles](figures/P9.png)
 
 ---
