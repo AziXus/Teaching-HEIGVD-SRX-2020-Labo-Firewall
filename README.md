@@ -505,6 +505,7 @@ iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sp
 
 ---
 **Réponse**
+
 Nous n'avons rien remarqué de particulier, nous aurions pû penser qu'il soit plus long à cause de la résolution DNS mais cela ne semble pas être le cas.
 
 
@@ -605,6 +606,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 
 ---
 **Réponse**
+
 Permet d'accéder au serveur à distance via un terminal et donc de ne pas devoir s'y déplacer physiquement.
 ssh est également sécurisé et les données sont chiffrées.
 
@@ -618,6 +620,7 @@ ssh est également sécurisé et les données sont chiffrées.
 
 ---
 **Réponse**
+
 Il faut être le plus précis possible en spécifiant le moins de machines possibles et donc d'éviter de donner des accès à des machines non-désirées.
 
 ---
