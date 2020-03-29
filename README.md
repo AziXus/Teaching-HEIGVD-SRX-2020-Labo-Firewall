@@ -125,6 +125,7 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 
 | Adresse IP source | Adresse IP destination | Type              | Port src | Port dst | Action |
 | :---:             | :---:                  | :----------------:| :------: | :------: | :----: |
+| any               | any                    | any               | any      | any      | Drop   |
 | 192.168.100.0/24  | Interface WAN          | UDP               | any      | 53       | Accept |
 | 192.168.100.0/24  | Interface WAN          | TCP               | any      | 53       | Accept |
 | 192.168.100.0/24  | Interface WAN          | ICMP echo-request | -        | -        | Accept |
@@ -140,7 +141,6 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 | Interface WAN     | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
 | 192.168.100.3/24  | Serveur WEB DMZ        | TCP               | any      | 22       | Accept |
 | 192.168.100.3/24  | Firewall               | TCP               | any      | 22       | Accept |
-| any               | any                    | any               | any      | any      | Drop   |
 
 ---
 
@@ -637,6 +637,7 @@ ssh permet également une connexion sécurisée et les données sont donc chiffr
 Il faut être le plus précis possible en spécifiant le moins de machines possibles et donc d'éviter de donner des accès à des machines non-désirées.
 
 Eviter par exemple de donner un accès à tout un réseau préférer une mise en place de règle de machine par machine.
+Car dans ce cas on pourrait par exemple exposer le ssh du Firewall à des personnes non-desirées(hacker).
 
 ---
 
