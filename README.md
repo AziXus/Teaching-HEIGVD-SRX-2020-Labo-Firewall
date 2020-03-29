@@ -407,7 +407,7 @@ iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 
 # Enable stateful mode by allowing established connections
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED -j ACCEPT
 
 # Allow ping from LAN to DMZ
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
@@ -537,8 +537,11 @@ Commandes iptables :
 ---
 
 ```bash
+# LAN vers serveurs http du WAN
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 80 -o eth0 -j ACCEPT
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 8080 -o eth0 -j ACCEPT
+
+# LAN vers serveurs https du WAN
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 443 -o eth0 -j ACCEPT
 ```
 
@@ -551,10 +554,11 @@ Commandes iptables :
 ---
 
 ```bash
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 -d 192.168.200.3 --dport 80 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 -d 192.168.100.0/24 --sport 80 -j ACCEPT
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -d 192.168.200.3 --dport 80 -i eth0 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 --sport 80 -o eth0 -j ACCEPT
+# LAN vers serveur web en DMZ
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 -d 192.168.200.3 --dport 80 -j ACCEPT
+
+# WAN vers serveur web en DMZ
+iptables -A FORWARD -p tcp -d 192.168.200.3 --dport 80 -i eth0 -j ACCEPT
 ```
 ---
 
@@ -582,9 +586,7 @@ Commandes iptables :
 ---
 
 ```bash
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -s 192.168.200.3 -d 192.168.100.3 --sport 22 -j ACCEPT
-
+iptables -A FORWARD -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -j ACCEPT
 iptables -A INPUT -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.3 -d 192.168.100.2 --dport 22 -j ACCEPT
 iptables -A OUTPUT -m state --state ESTABLISHED -p tcp -s 192.168.100.2 -d 192.168.100.3 --sport 22 -j ACCEPT
 ```
