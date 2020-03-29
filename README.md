@@ -123,21 +123,24 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 
 **LIVRABLE : Remplir le tableau**
 
-| Adresse IP source | Adresse IP destination | Type | Port src | Port dst | Action |
-| :---:             | :---:                  | :---:| :------: | :------: | :----: |
-| LAN               | Serveurs DNS           | UDP  | any      | 53       | Accept |
-| LAN               | Serveurs DNS           | TCP  | any      | 53       | Accept |
-| LAN               | WAN                    | ICMP | any      | any      | Accept |
-| LAN               | DMZ                    | ICMP | any      | any      | Accept |
-| DMZ               | LAN                    | ICMP | any      | any      | Accept |
-| LAN               | WAN                    | TCP  | any      | 80       | Accept |
-| LAN               | WAN                    | TCP  | any      | 8080     | Accept |
-| LAN               | WAN                    | TCP  | any      | 443      | Accept |
-| LAN               | Serveur WEB DMZ        | TCP  | any      | 80       | Accept |
-| WAN               | Serveur WEB DMZ        | TCP  | any      | 80       | Accept |
-| LAN               | Serveur WEB DMZ        | TCP  | any      | 22       | Accept |
-| LAN               | Firewall               | TCP  | any      | 22       | Accept |
-| any               | any                    | any  | any      | any      | Drop   |
+| Adresse IP source | Adresse IP destination | Type              | Port src | Port dst | Action |
+| :---:             | :---:                  | :----------------:| :------: | :------: | :----: |
+| 192.168.100.0/24  | Interface WAN          | UDP               | any      | 53       | Accept |
+| 192.168.100.0/24  | Interface WAN          | TCP               | any      | 53       | Accept |
+| 192.168.100.0/24  | Interface WAN          | ICMP echo-request | -        | -        | Accept |
+| Interface WAN     | 192.168.100.0/24       | ICMP echo-reply   | -        | -        | Accept |
+| 192.168.100.0/24  | 192.168.200.0/24       | ICMP echo-request | -        | -        | Accept |
+| 192.168.200.0/24  | 192.168.100.0/24       | ICMP echo-reply   | -        | -        | Accept |
+| 192.168.200.0/24  | 192.168.100.0/24       | ICMP echo-request | -        | -        | Accept |
+| 192.168.100.0/24  | 192.168.200.0/24       | ICMP echo-reply   | -        | -        | Accept |
+| 192.168.100.0/24  | Interface WAN          | TCP               | any      | 80       | Accept |
+| 192.168.100.0/24  | Interface WAN          | TCP               | any      | 8080     | Accept |
+| 192.168.100.0/24  | Interface WAN          | TCP               | any      | 443      | Accept |
+| 192.168.100.0/24  | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
+| Interface WAN     | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
+| Client du LAN     | Serveur WEB DMZ        | TCP               | any      | 22       | Accept |
+| Client du LAN     | Firewall               | TCP               | any      | 22       | Accept |
+| any               | any                    | any               | any      | any      | Drop   |
 
 ---
 
