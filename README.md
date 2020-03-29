@@ -138,8 +138,8 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 | 192.168.100.0/24  | Interface WAN          | TCP               | any      | 443      | Accept |
 | 192.168.100.0/24  | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
 | Interface WAN     | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
-| Client du LAN     | Serveur WEB DMZ        | TCP               | any      | 22       | Accept |
-| Client du LAN     | Firewall               | TCP               | any      | 22       | Accept |
+| 192.168.100.3/24  | Serveur WEB DMZ        | TCP               | any      | 22       | Accept |
+| 192.168.100.3/24  | Firewall               | TCP               | any      | 22       | Accept |
 | any               | any                    | any               | any      | any      | Drop   |
 
 ---
@@ -401,23 +401,23 @@ Commandes iptables :
 ---
 
 ```bash
-# Drop all packets by default
+# Drop de tous les paquets par défaut
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 
-# Enable stateful mode by allowing established connections
+# Mise en place du mode avec état du pare-feu pour toutes les connexions "ESTABLISHED"
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED -j ACCEPT
 
-# Allow ping from LAN to DMZ
+# Permet les ping du LAN vers la DMZ
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -s 192.168.200.0/24 -d 192.168.100.0/24 -j ACCEPT
 
-# Allow ping from LAN to WAN interface
+# Permet le ping du LAN vers l'interfance de sortie pour le WAN
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -o eth0 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -d 192.168.100.0/24 -i eth0 -j ACCEPT
 
-# Allow ping from DMZ to LAN
+# Permet le ping de la DMZ vers le LAN
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.200.0/24 -d 192.168.100.0/24 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 ```
@@ -453,7 +453,7 @@ Faire une capture du ping.
 | Interface DMZ du FW  | KO    | Policy INPUT du FW est DROP      |
 | Interface LAN du FW  | KO    | Policy INPUT du FW est DROP      |
 | Client LAN           | OK    | Sur son propre interface donc ok |
-| Serveur WAN          | OK    | Autorisé par règle               |
+| Serveur WAN          | OK    | Autorisé par règle mise en place |
 
 
 | De Server\_in\_DMZ à | OK/KO | Commentaires et explications     |
@@ -491,7 +491,9 @@ Commandes iptables :
 ---
 
 ```bash
+# Permet la communication du LAN vers le port 53 dans le WAN par l'interface eth0(mode udp)
 iptables -A FORWARD -p udp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
+# Permet la communication du LAN vers le port 53 dans le WAN par l'interface eth0(mode tcp)
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
 ```
 
@@ -517,7 +519,11 @@ iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
 ---
 **Réponse**
 
-Le premier ping ne fonctionnait pas car on utilisant un nom de domaine et pas une addresse ip. On effectuait donc d'abord une requête DNS afin de le traduire en une adresse ip mais cette requête était bloqué par le firewall.
+Le premier ping ne fonctionnait pas car le nom de domaine était donné et non pas une addresse ip. On effectuait donc d'abord une requête DNS afin de le traduire en une adresse ip mais cette requête était bloqué par le firewall.
+
+Le message "Temporary failure in name resolution" nous indique donc qu'une traduction a été tenté mais comme e port 53 est bloqué sur le firewall il était impossible d'effectuer cette traduction.
+
+Ce problème est ensuite reglé grâce aux rêgles que nous avons mise en place.
 
 ---
 
@@ -613,8 +619,9 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 ---
 **Réponse**
 
-Permet d'accéder au serveur à distance via un terminal et donc de ne pas devoir s'y déplacer physiquement.
-ssh est également sécurisé et les données sont chiffrées.
+Permet d'accéder au serveur à distance via un terminal et donc de ne pas devoir s'y déplacer physiquement.  
+
+ssh permet également une connexion sécurisée et les données sont donc chiffrées.
 
 ---
 
@@ -628,6 +635,8 @@ ssh est également sécurisé et les données sont chiffrées.
 **Réponse**
 
 Il faut être le plus précis possible en spécifiant le moins de machines possibles et donc d'éviter de donner des accès à des machines non-désirées.
+
+Eviter par exemple de donner un accès à tout un réseau préférer une mise en place de règle de machine par machine.
 
 ---
 
