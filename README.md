@@ -401,16 +401,23 @@ Commandes iptables :
 ---
 
 ```bash
+# Drop all packets by default
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 
+# Enable stateful mode by allowing established connections
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+# Allow ping from LAN to DMZ
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -s 192.168.200.0/24 -d 192.168.100.0/24 -j ACCEPT
 
+# Allow ping from LAN to WAN interface
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -o eth0 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -d 192.168.100.0/24 -i eth0 -j ACCEPT
 
+# Allow ping from DMZ to LAN
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.200.0/24 -d 192.168.100.0/24 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 ```
@@ -484,11 +491,8 @@ Commandes iptables :
 ---
 
 ```bash
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p udp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
-
-iptables -A FORWARD -m state --state ESTABLISHED -p udp -d 192.168.100.0/24 --sport 53 -i eth0 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 53 -i eth0 -j ACCEPT
+iptables -A FORWARD -p udp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
 ```
 
 ---
@@ -513,8 +517,7 @@ iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sp
 ---
 **Réponse**
 
-Nous n'avons rien remarqué de particulier, nous aurions pû penser qu'il soit plus long à cause de la résolution DNS mais cela ne semble pas être le cas.
-
+Le premier ping ne fonctionnait pas car on utilisant un nom de domaine et pas une addresse ip. On effectuait donc d'abord une requête DNS afin de le traduire en une adresse ip mais cette requête était bloqué par le firewall.
 
 ---
 
@@ -534,15 +537,9 @@ Commandes iptables :
 ---
 
 ```bash
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 80 -o eth0 -j ACCEPT
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 8080 -o eth0 -j ACCEPT
-
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 80 -i eth0 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 8080 -i eth0 -j ACCEPT
-
-
-iptables -A FORWARD -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.0/24 --dport 443 -o eth0 -j ACCEPT
-iptables -A FORWARD -m state --state ESTABLISHED -p tcp -d 192.168.100.0/24 --sport 443 -i eth0 -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 80 -o eth0 -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 8080 -o eth0 -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 443 -o eth0 -j ACCEPT
 ```
 
 ---
