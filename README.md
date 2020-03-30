@@ -406,14 +406,15 @@ iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 
-# Mise en place du mode avec état du pare-feu pour toutes les connexions "ESTABLISHED"
-iptables -A FORWARD -m conntrack --ctstate ESTABLISHED -j ACCEPT
+# Mise en place du mode avec état du pare-feu pour toutes les connexions "ESTABLISHED" et "RELATED"
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 # Permet les ping du LAN vers la DMZ
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -s 192.168.200.0/24 -d 192.168.100.0/24 -j ACCEPT
 
-# Permet le ping du LAN vers l'interfance de sortie pour le WAN
+# Permet le ping du LAN vers l'interface de sortie pour le WAN
 iptables -A FORWARD -p icmp --icmp-type echo-request -s 192.168.100.0/24 -o eth0 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-reply -d 192.168.100.0/24 -i eth0 -j ACCEPT
 
