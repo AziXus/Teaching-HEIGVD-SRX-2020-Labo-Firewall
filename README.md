@@ -137,9 +137,9 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 | 192.168.100.0/24  | Interface WAN          | TCP               | any      | 80       | Accept |
 | 192.168.100.0/24  | Interface WAN          | TCP               | any      | 8080     | Accept |
 | 192.168.100.0/24  | Interface WAN          | TCP               | any      | 443      | Accept |
-| 192.168.100.0/24  | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
-| Interface WAN     | Serveur WEB DMZ        | TCP               | any      | 80       | Accept |
-| 192.168.100.3/24  | Serveur WEB DMZ        | TCP               | any      | 22       | Accept |
+| 192.168.100.0/24  | 192.168.200.3/24       | TCP               | any      | 80       | Accept |
+| Interface WAN     | 192.168.200.3/24       | TCP               | any      | 80       | Accept |
+| 192.168.100.3/24  | 192.168.200.3/24       | TCP               | any      | 22       | Accept |
 | 192.168.100.3/24  | Firewall               | TCP               | any      | 22       | Accept |
 
 ---
