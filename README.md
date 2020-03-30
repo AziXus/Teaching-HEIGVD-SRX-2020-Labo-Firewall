@@ -408,6 +408,7 @@ iptables -P OUTPUT DROP
 
 # Mise en place du mode avec état du pare-feu pour toutes les connexions "ESTABLISHED" et "RELATED"
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+# Tout paquet avec un état INVALID est DROP lors d'un FORWARD
 iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 # Permet les ping du LAN vers la DMZ
@@ -520,9 +521,9 @@ iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -j ACCEPT
 ---
 **Réponse**
 
-Le premier ping ne fonctionnait pas car le nom de domaine était donné et non pas une addresse ip. On effectuait donc d'abord une requête DNS afin de le traduire en une adresse ip mais cette requête était bloqué par le firewall.
+Le premier ping ne fonctionnait pas car le nom de domaine était donné et non pas une addresse ip. On effectuait donc d'abord une requête DNS afin de traduire le nom en une adresse ip mais cette requête était bloquée par le firewall.
 
-Le message "Temporary failure in name resolution" nous indique donc qu'une traduction a été tenté mais comme e port 53 est bloqué sur le firewall il était impossible d'effectuer cette traduction.
+Le message "Temporary failure in name resolution" nous indique donc qu'une traduction a été tenté mais comme le port 53 est bloqué sur le firewall il était impossible d'effectuer cette traduction.
 
 Ce problème est ensuite reglé grâce aux rêgles que nous avons mise en place.
 
@@ -593,8 +594,11 @@ Commandes iptables :
 ---
 
 ```bash
+# SSH depuis le Client_in_LAN vers le serveur web en DMZ
 iptables -A FORWARD -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -j ACCEPT
+# SSH depuis le Client_in_LAN en INPUT au firewall seulement avec des paquets en état NEW ESTABLISHED
 iptables -A INPUT -m state --state NEW,ESTABLISHED -p tcp -s 192.168.100.3 -d 192.168.100.2 --dport 22 -j ACCEPT
+# SSH serveur ne répondra qu'à des paquets avec un état ESTABLISHED sur le port 22 avec le Client_in_LAN comme destintaire
 iptables -A OUTPUT -m state --state ESTABLISHED -p tcp -s 192.168.100.2 -d 192.168.100.3 --sport 22 -j ACCEPT
 ```
 
